@@ -164,11 +164,11 @@ For the example in this vignette, you can try using the MySQL command line to se
 
 ![](img/install_15.jpg)
 
-## Data
+## Data Introduction
 
 Our dataset is Bike Sharing Dataset from UC,Irvine Machine Learning Center. (https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset) This dataset contains the hourly and daily count of rental bikes between years 2011 and 2012 in Capital bikeshare system with the corresponding weather and seasonal information. We are going to use this dataset as the example to implement some SQL functions. The 'data' directory contains two csv files and a Readme with the data description. \# hour.csv : bike sharing counts aggregated on hourly basis. Records: 17379 hours \# day.csv : bike sharing counts aggregated on daily basis. Records: 731 days
 
-## PRELIMINARY STEPS
+## Preliminary Steps
 
 1.Install and load the packages
 
@@ -229,7 +229,7 @@ dbListFields(mydb, "day")
 dbReadTable(mydb, "day")
 ```
 
-## WHAT ARE Queries, SQL, MySQL:
+## Queries
 
 ### Basic Syntax
 
