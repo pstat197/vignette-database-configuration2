@@ -24,9 +24,9 @@ In this report, we explore how to configure a dataset and write queries in R. Sp
 
 1.3 img
 
-1.3.1 fig1.png
+1.3.1 install_1.jpg
  
-1.3.2 fig2.png
+1.3.2 install_2.jpg
 
 ...
 
