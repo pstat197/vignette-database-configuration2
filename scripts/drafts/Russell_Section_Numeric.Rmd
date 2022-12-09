@@ -102,6 +102,3 @@ dbGetQuery(mydb,
 "SELECT atemp, hum, TRUNCATE(atemp,-2), TRUNCATE(hum,-1) FROM day" )
 ```
 
-```{r}
-dbGetQuery(mydb, "SELECT * FROM hour" )
-```

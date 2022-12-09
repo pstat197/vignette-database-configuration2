@@ -2,16 +2,26 @@
 title: "Databases and Queries in MySQL"
 format: pdf
 editor: visual
-author: Ankur Malik, Haotian Xia, Haoming Deng, Jennifer Park, Russel Liu 
+author: Ankur Malik, Haotian Xia, Haoming Deng, Jennifer Park, Russell Liu 
 ---
 
-## ABSTRACT:
+## Abstract:
 
-summary:
+In this report, we explore how to configure a dataset and write queries in R. Specifically, we first configure the database, build the database, including steps such as Import Libraries, Connect R/Python to MySQL, Create a new database in R/Python, Connect to the Database,Create table and Insert data/table into database. We then write queries by introducing some common functions, tables, syntax and filtering clause. Besides, we created a document which explains how to setup MySQL and the corresponding environment steps by steps.
 
-## DATA:
+## Introduction:
 
-Write about data set...
+We are introducing a tutorial for people who want to play with database in R
+
+Goal: Make people feel comfortable in basic programming with database and extract the data they want Target people (group): people who do not have database programming experience scope: SQL and dbplyr in R
+
+SQL is one of the most popular database language for people to extract data information. However, it has it own syntax and sometimes hard to memorize and learn. In order to adapt people have different coding background, we are also introducing dbplyr as a substitution way to help you extract data from the dataset. dbplyr is a package in R, and its syntax like most r functions. The purpose for dbplyr is to automatically generate SQL for you so that you're not forced to use it.
+
+However, dbplyr doesn't do everything and is not as powerful as SQL. Therefore, this projct will spend most of time on SQL and show you how dbplyr works in some cases.
+
+After reading both dbplyr part and sql part, you will know how easy to grab data from dataset and will form a basis for you to use them successfully in real projects.
+
+Let's begin with installing the MySQL Server.
 
 ## Installing the MySQL Server
 
@@ -130,7 +140,7 @@ For the example in this vignette, you can try using the MySQL command line to se
     mysql> exit
     Bye
 
-# Installing MySQL Workbench
+## Installing MySQL Workbench
 
 1.  Download MySQL Workbench 8.0.31 from <https://dev.mysql.com/downloads/workbench/>. Be sure to select the correct operating system and processor for your computer. For Macbook M1/M2, please select macOS (x86, 64-bit), DMG Archive. You can start the download without creating an Oracle Web Account.
 
@@ -154,7 +164,114 @@ For the example in this vignette, you can try using the MySQL command line to se
 
 ![](img/install_15.jpg)
 
+## Data
+
+Our dataset is Bike Sharing Dataset from UC,Irvine Machine Learning Center. (https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset) This dataset contains the hourly and daily count of rental bikes between years 2011 and 2012 in Capital bikeshare system with the corresponding weather and seasonal information. We are going to use this dataset as the example to implement some SQL functions. The 'data' directory contains two csv files and a Readme with the data description. \# hour.csv : bike sharing counts aggregated on hourly basis. Records: 17379 hours \# day.csv : bike sharing counts aggregated on daily basis. Records: 731 days
+
+## PRELIMINARY STEPS
+
+1.Install and load the packages
+
+```{r}
+install.packages("RMariaDB")
+install.packages("DBI")
+library(RMariaDB)
+library(DBI)
+```
+
+2.Import csv files as data frames
+
+```{r}
+df_day <- read.csv("data/day.csv", header=TRUE)
+head(df_day)
+
+df_hour <-read.csv("data/hour.csv", header=TRUE)
+head(df_hour)
+```
+
+3.Build the Database
+
+connect R to MySQL by creating a MySQL connection object select which MySQL account to use for the database user - your account username. Here we use the default, 'root'. password - your account password host - a string identifying the host machine that is running server. Here we use the default, 'localhost'.
+
+```{r}
+con <- dbConnect(RMariaDB::MariaDB(), 
+                 user = 'root', 
+                 password = 'password', # YOUR PASSWORD HERE
+                 host = 'localhost')
+
+# create a new database
+dbSendQuery(con, "CREATE DATABASE bikes")
+dbSendQuery(con, "USE bikes")
+
+# reconnect to the database that we just created
+mydb <- dbConnect(RMariaDB::MariaDB(), 
+                 user = 'root', 
+                 password = 'password',
+                 host = 'localhost',
+                 dbname = 'bikes')
+
+# Write the data frames to database tables
+dbWriteTable(conn = mydb,
+             name = "day",
+             value = df_day)
+
+dbWriteTable(conn = mydb,
+             name = "hour",
+             value = df_hour)
+
+# list the tables available in bikes
+dbListTables(mydb)
+
+# list the fields in a table
+dbListFields(mydb, "day")
+
+# view the whole table
+dbReadTable(mydb, "day")
+```
+
 ## WHAT ARE Queries, SQL, MySQL:
+
+### Basic Syntax
+
+**Function:** SELECT
+
+**Purpose:** It is used to select data based on specific conditions
+
+```{r}
+# we want to select day.season and day.yr from day. we can also select other columns from the table.
+dbGetQuery(mydb, 'SELECT day.season, day.yr FROM day')
+```
+
+**Function:** INSERT
+
+**Purpose:** It is used to insert data into the tables with specific values
+
+```{r}
+# we want to insert new values 1 and 0 into day.season and day.yr
+dbGetQuery(mydb, 'INSERT INTO day(day.season, day.yr)
+                  VALUES (1,0)')
+```
+
+**Function:** UPDATE
+
+**Purpose:** It is used to update data into the tables with specific values
+
+```{r}
+# we want to update weekday to 9 where workingday equals to 0 in day. we can also use multiple conditions in the WHERE clause.
+dbGetQuery(mydb, 'UPDATE day
+                  SET weekday=8
+                  WHERE workingday=0')
+```
+
+**Function:** DELETE
+
+**Purpose:** It is used to delete specific data in a table
+
+```{r}
+# we want to delete values from day where workingday equals to 0. we can also set other conditions when we want to delete values from the table.
+dbGetQuery(mydb, 'DELETE FROM day
+                  WHERE workingday=0')
+```
 
 **What is a Query? What is a SQL? What is MySQL?**
 
@@ -164,7 +281,7 @@ A **query** is a statement which enables us to extract data or information from 
 
 In this project, we are focusing on a specific kind of SQL called MySQL**. MySQL** is defined a relational database management system based on SQL. It differs from other versions of SQL primarily based on syntax, functionality, and purpose.
 
-## MySQL Functions:
+### Filtering Clause:
 
 **Function:** WHERE
 
@@ -224,11 +341,9 @@ dbGetQuery(mydb, 'SELECT day.windspeed, hour.casual FROM day INNER JOIN hour ON 
 
 **Function:** OUTER JOIN/ FULL JOIN
 
-**Purpose:** Outer Join keyword returns all records when there is a match in left (table1) or right (table2) table records.
+**Purpose:** Outer Join keyword returns all records when there is a match in left (table1) or right (table2) table records. MySQL does not support the full join so we use the following way to mimic the same process.
 
 ```{r}
-# dbGetQuery(mydb, 'SELECT day.season, hour.casual FROM day FULL JOIN hour ON day.season = hour.season LIMIT 5')
-# Selecting all the attributes from day and hour database where there is a match
 dbGetQuery(mydb, "SELECT day.windspeed, hour.casual FROM day LEFT JOIN hour ON day.season = hour.season UNION 
            SELECT day.windspeed, hour.casual FROM day RIGHT JOIN hour ON day.season = hour.season LIMIT 5")
 ```
@@ -314,6 +429,151 @@ dbGetQuery(mydb, "SELECT DISTINCT(dteday) FROM day where temp = 0.3441670" )
 dbGetQuery(mydb, "SELECT DISTINCT(windspeed) FROM day where temp = 0.1" ) # Value Does not Exist
 ```
 
+### Numerical Functions
+
+**Function:** RAND
+
+**Purpose:** Generate a series of random numbers
+
+```{r}
+# We can see that a random number from 0 to 1 is chosen.
+dbGetQuery(mydb, "SELECT RAND()" )
+```
+
+**Function:** ROUND
+
+**Purpose:** The ROUND() function rounds a number to a specified number of decima places. For example, we want to round up temperature and windspeed to 3 decimals
+
+```{r}
+# We can see that temperature and windspeed are round from 7decimals to 3 decimals.
+dbGetQuery(mydb, "SELECT temp,round(temp,3),windspeed, round(windspeed,
+3) FROM day" )
+```
+
+**Function:** FLOOR
+
+**Purpose:** The FLOOR() function returns the largest integer value that is smaller than or equal to a number. We want to see the largest integer value which is either equal to or less than the given average or minimum windspeed.
+
+```{r}
+# Given the average value of windspeed and minimum value of windspeed, we see largest integer value that is either equal to or less than the average and minimum windspeed.
+
+dbGetQuery(mydb,"SELECT AVG(windspeed),MIN(windspeed),FLOOR(AVG(windspeed)) AS
+Lower_Average FROM day" ) 
+dbGetQuery(mydb, "SELECT
+AVG(windspeed),MIN(windspeed),FLOOR(MIN(windspeed)) AS Lower_Average
+FROM day" )
+```
+
+**Function:** CEIL
+
+**Purpose:** The CEIL() function returns the smallest integer value that is bigger than or equal to a number. It is equal to the CEILING() function. we want to see the smallest integer value which is either greater than or equal to the given average or minimum number.
+
+```{r}
+dbGetQuery(mydb, "SELECT
+AVG(windspeed),MIN(windspeed),CEIL(AVG(windspeed)) AS Lower_Average FROM
+day" ) 
+dbGetQuery(mydb, "SELECT
+AVG(windspeed),MIN(windspeed),CEIL(MIN(windspeed)) AS Lower_Average FROM
+day" )
+```
+
+**Function:** Truncate(n,d) with positive d
+
+**Purpose:** we want to see atemp keeps 2 decimals and hum only keeps 1 decimals
+
+```{r}
+dbGetQuery(mydb, "SELECT atemp, hum,
+TRUNCATE(atemp,2), TRUNCATE(hum,1) FROM day" )
+```
+
+**Function:** #Truncate(n,d) with negative d we want to see atem and hum are truncated
+
+**Purpose:** we want to see two or one digit left to the decimal points.
+
+```{r}
+dbGetQuery(mydb,
+"SELECT atemp, hum, TRUNCATE(atemp,-2), TRUNCATE(hum,-1) FROM day" )
+```
+
+### Haotian
+
+```{r}
+# Count ALL: How many row we have
+dbGetQuery(mydb, "SELECT COUNT(*) FROM day" )
+
+# Count Distinct weekday 
+dbGetQuery(mydb, "SELECT COUNT(DISTINCT (weekday)) FROM day" )
+
+# we want to see the average windspeed among all data
+
+dbGetQuery(mydb, "SELECT AVG(windspeed) AS AVERAGE_SPEED FROM day" )
+
+# we want to see the sum of casual users
+dbGetQuery(mydb, "SELECT SUM(casual) AS TOTAL_NUM_CASUAL_USER FROM day")
+
+# we want to see the max speed of wind
+dbGetQuery(mydb, "SELECT MAX(windspeed) AS MAX_WINDSPEED FROM day")
+
+# we want to see the min speed of wind
+dbGetQuery(mydb, "SELECT MIN(windspeed) AS MIN_WINDSPEED FROM day")
+
+# We want to concat days and hours as one column
+
+dbGetQuery(mydb, "SELECT CONCAT(dteday,' Hour: ',hr) FROM hour")
+
+# We want to see how many characters composes the date
+dbGetQuery(mydb, "SELECT DISTINCT(LENGTH(dteday)) AS length_of_char_date FROM hour")
+
+#WE want to firstly create windspeed breakdown to two part low and high. Then we want to 
+# show how to use lower function to make all spring be lower case
+dbGetQuery(mydb, "SELECT LOWER(SPEED_BREAKDOWN) FROM (SELECT windspeed, CASE 
+            WHEN windspeed < 0.1 THEN 'LOW'
+            ELSE 'HIGH'
+            END AS SPEED_BREAKDOWN FROM day) AS tmp")
+
+#  We want to show how to use upper function to make all spring be upper case
+dbGetQuery(mydb, "SELECT UPPER(SPEED_BREAKDOWN) FROM (SELECT windspeed, CASE 
+            WHEN windspeed < 0.1 THEN 'low'
+            ELSE 'high'
+            END AS SPEED_BREAKDOWN FROM day) AS tmp")
+```
+
+### dbplyr
+
+We can also use dbplyr to query the data.
+
+```{r}
+library(dbplyr)
+library(dplyr)
+#CONNECT TO DATABASE
+con <- dbConnect(RMariaDB::MariaDB(), 
+                  user = 'root', 
+                  password = 'password', # YOUR PASSWORD HERE
+                  host = 'localhost',
+                  dbname = 'bikes')
+
+#CONNECT TO TABLE
+data_sample<- con %>% tbl("day")
+
+# SELECT differenct columns 
+# SELECT 4 cloumns together. In Sql we have to write down the four columns' name seperately. But in dbplyr, we can use : to select a range of columns.
+data_sample %>% select(season:holiday)
+
+# We can use filter to subsititude where condition in sql. Here we are showing data that has wind speed greater than 0.4
+data_sample %>% filter(windspeed > 0.4)
+
+# We can also do the same SQL group by and aggregation task by uing dbplyr group_by function
+
+data_sample %>% group_by(weekday) %>%
+  summarise(
+    count_day = count(instant)
+  )
+```
+
+However if we want to realize join function, we need to use show_query() function to identify the join key. In this case, we still need to use SQL syntax in order to do the comlicated correct join. More can be viewed here: https://dbplyr.tidyverse.org/reference/join.tbl_sql.html
+
+So the dbplyr can be used in samll simple aggregation tasks without sql knowledge. However, once multiple dataset includes, we still need to know SQL in order to finish more complicated tasks.
+
 ## Works Cited:
 
 1.  MySQL Installation Guide: <https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/>
@@ -324,3 +584,4 @@ dbGetQuery(mydb, "SELECT DISTINCT(windspeed) FROM day where temp = 0.1" ) # Valu
 6.  Guo, Aibo, et al. "ER-SQL: Learning Enhanced Representation for Text-to-SQL Using Table Contents." Neurocomputing (Amsterdam), vol. 465, 2021, pp. 359--70, https://doi.org/10.1016/j.neucom.2021.08.134.
 7.  Guo, Aibo, et al. "ER-SQL: Learning Enhanced Representation for Text-to-SQL Using Table Contents." Neurocomputing (Amsterdam), vol. 465, 2021, pp. 359--70, https://doi.org/10.1016/j.neucom.2021.08.134.
 8.  Reese, George., et al. Managing and Using MySQL. 2nd ed., O'Reilly, 2002.\
+9.  https://rmariadb.r-dbi.org/reference/dbconnect-mariadbdriver-method

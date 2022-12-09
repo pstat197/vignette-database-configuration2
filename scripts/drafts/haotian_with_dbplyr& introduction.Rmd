@@ -51,11 +51,9 @@ dbReadTable(mydb, 'hour')
 dbReadTable(mydb, 'day')
 
 # Count ALL: How many row we have
-
 dbGetQuery(mydb, "SELECT COUNT(*) FROM day" )
 
 # Count Distinct weekday 
-
 dbGetQuery(mydb, "SELECT COUNT(DISTINCT (weekday)) FROM day" )
 
 # we want to see the average windspeed among all data
@@ -92,7 +90,7 @@ dbGetQuery(mydb, "SELECT UPPER(SPEED_BREAKDOWN) FROM (SELECT windspeed, CASE
             END AS SPEED_BREAKDOWN FROM day) AS tmp")
 ```
 
-Now, Let's talk about abplyr.
+Now, Let's talk about dbplyr.
 
 ```{r dbplyr}
 library(dbplyr)
