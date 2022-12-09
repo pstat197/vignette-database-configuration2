@@ -1,4 +1,4 @@
-## vignette-database-configuration
+## Topic: vignette-database-configuration
 Vignette on configuring a database and writing queries in R; created as a class project for PSTAT197A in Fall 2022.
     
 ## Contributors
