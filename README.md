@@ -8,7 +8,7 @@ Jennifer Park, Russell(Senyuan) Liu, Haotian Xia, Haoming Deng, Ankur Malik.
 In this report, we explore how to configure a dataset and write queries in R. Specifically, we first configure the database, build the database, including steps such as Import Libraries, Connect R/Python to MySQL, Create a new database in R/Python, Connect to the Database,Create table and Insert data/table into database. We then write queries by introducing some common functions, tables, syntax and filtering clause. Besides, we created a document which explains how to setup MySQL and the corresponding environment steps by steps.
 
 ## Repository contents
-1root directory
+1 root directory
 
 1.1 data
 
