@@ -17,7 +17,7 @@ Goal: Make people feel comfortable in basic programming with database and extrac
 
 SQL is one of the most popular database language for people to extract data information. However, it has it own syntax and sometimes hard to memorize and learn. In order to adapt people have different coding background, we are also introducing dbplyr as a substitution way to help you extract data from the dataset. dbplyr is a package in R, and its syntax like most r functions. The purpose for dbplyr is to automatically generate SQL for you so that you're not forced to use it.
 
-However, dbplyr doesn't do everything and is not as powerful as SQL. Therefore, this projct will spend most of time on SQL and show you how dbplyr works in some cases.
+However, dbplyr doesn't do everything and is not as powerful as SQL. Therefore, this project will spend most of time on SQL and show you how dbplyr works in some cases.
 
 After reading both dbplyr part and sql part, you will know how easy to grab data from dataset and will form a basis for you to use them successfully in real projects.
 
