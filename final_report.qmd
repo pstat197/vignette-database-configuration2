@@ -495,35 +495,83 @@ dbGetQuery(mydb,
 "SELECT atemp, hum, TRUNCATE(atemp,-2), TRUNCATE(hum,-1) FROM day" )
 ```
 
-### Haotian
+**Function:** COUNT ALL
+
+**Purpose:** How many row we have in the dataset
 
 ```{r}
-# Count ALL: How many row we have
+
 dbGetQuery(mydb, "SELECT COUNT(*) FROM day" )
+```
 
-# Count Distinct weekday 
+**Function:** COUNT(Distinct())
+
+**Purpose:** How many unique value (weekday) we have in the dataset
+
+```{r}
 dbGetQuery(mydb, "SELECT COUNT(DISTINCT (weekday)) FROM day" )
+```
 
-# we want to see the average windspeed among all data
+**Function:** avg()
 
+**Purpose:** the average value of a target variable
+
+```{r}
+# we want to see the average speed
 dbGetQuery(mydb, "SELECT AVG(windspeed) AS AVERAGE_SPEED FROM day" )
+```
 
+**Function:** sum()
+
+**Purpose:** the sum value of a target variable
+
+```{r}
 # we want to see the sum of casual users
 dbGetQuery(mydb, "SELECT SUM(casual) AS TOTAL_NUM_CASUAL_USER FROM day")
+```
 
+**Function:** max()
+
+**Purpose:** the max value of a target variable
+
+```{r}
 # we want to see the max speed of wind
 dbGetQuery(mydb, "SELECT MAX(windspeed) AS MAX_WINDSPEED FROM day")
+```
 
+**Function:** min()
+
+**Purpose:** the min value of a target variable
+
+```{r}
 # we want to see the min speed of wind
 dbGetQuery(mydb, "SELECT MIN(windspeed) AS MIN_WINDSPEED FROM day")
+```
 
+**Function:** concat()
+
+**Purpose:** concatenate different string to one string
+
+```{r}
 # We want to concat days and hours as one column
 
 dbGetQuery(mydb, "SELECT CONCAT(dteday,' Hour: ',hr) FROM hour")
+```
 
+**Function:** length()
+
+**Purpose:** to see how many characters composes a specific string
+
+```{r}
 # We want to see how many characters composes the date
 dbGetQuery(mydb, "SELECT DISTINCT(LENGTH(dteday)) AS length_of_char_date FROM hour")
+```
 
+**Function:** lower()
+
+**Purpose:** to make all characters to lower case
+
+```{r}
 #WE want to firstly create windspeed breakdown to two part low and high. Then we want to 
 # show how to use lower function to make all spring be lower case
 dbGetQuery(mydb, "SELECT LOWER(SPEED_BREAKDOWN) FROM (SELECT windspeed, CASE 
@@ -531,11 +579,19 @@ dbGetQuery(mydb, "SELECT LOWER(SPEED_BREAKDOWN) FROM (SELECT windspeed, CASE
             ELSE 'HIGH'
             END AS SPEED_BREAKDOWN FROM day) AS tmp")
 
+```
+
+**Function:** upper()
+
+**Purpose:** to make all characters to upper case
+
+```{r}
 #  We want to show how to use upper function to make all spring be upper case
 dbGetQuery(mydb, "SELECT UPPER(SPEED_BREAKDOWN) FROM (SELECT windspeed, CASE 
             WHEN windspeed < 0.1 THEN 'low'
             ELSE 'high'
             END AS SPEED_BREAKDOWN FROM day) AS tmp")
+
 ```
 
 ### dbplyr
