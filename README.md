@@ -2,7 +2,7 @@
 Vignette on configuring a database and writing queries in R; created as a class project for PSTAT197A in Fall 2022.
     
 ## Contributors
-Jennifer Park, Russell Liu, Haotian Xia, Haoming Deng, Ankur Malik.
+Jennifer Park, Russell(Senyuan) Liu, Haotian Xia, Haoming Deng, Ankur Malik.
 
 ## Abstract
 A brief description in a few sentences of your vignette topic, example data, and outcomes.
