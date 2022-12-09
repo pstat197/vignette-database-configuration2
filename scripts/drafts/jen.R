@@ -53,13 +53,6 @@ dbWriteTable(conn = mydb,
              name = "hour",
              value = df_hour)
 
-# If you have many CSV files in your data folder and you want to import each one into a table
-temp = list.files("./data", pattern = "*.csv")
-list2env(
-  lapply(setNames(temp, make.names(gsub("*.csv$", "", temp))), 
-         read.csv), envir = .GlobalEnv)
-for (i in 1:length(temp)) assign(temp[i], read.csv(temp[i]))
-
 # list the tables available in bikes
 dbListTables(mydb)
 
