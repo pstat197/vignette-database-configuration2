@@ -43,6 +43,3 @@ root directory
 
 10.https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset
 
-## Usage
-## Contributing
-A typical README file would also contain instructions on use and instructions on contributing to the repository.
