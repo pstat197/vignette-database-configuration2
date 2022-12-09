@@ -12,21 +12,23 @@ In this report, we explore how to configure a dataset and write queries in R. Sp
 
 1.1 data
 
-1.1.1 raw
+1.1.1 day.csv
 
-1.1.2 processed
+1.1.2 hour.csv
 
 1.2 scripts
 
 1.2.1 final_script.R
 
-1.2.2 drafts : with different draft made by different people
+1.2.2 drafts : with different draft made by different people ...
 
 1.3 img
 
 1.3.1 fig1.png
  
 1.3.2 fig2.png
+
+...
 
 1.4 vignette.qmd
 
