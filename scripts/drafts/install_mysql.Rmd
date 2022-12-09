@@ -2,19 +2,19 @@
 
 1.  Download MySQL Community Server 8.0.31 from <https://dev.mysql.com/downloads/mysql/>. Be sure to select the correct operating system and processor for your computer. For Macbook M1/M2, it is macOS 12 (ARM, 64-bit), DMG Archive. You can start the download without creating an Oracle Web Account.
 
-![](images/install_1.jpg)
+![](img/install_1.jpg)
 
 2.  Once the download is complete, open mysql-8.0.31-macos12-arm64.dmg. This file can be found either in the downloads toolbar at the bottom your browser window (Google Chrome) or in the 'Downloads' folder of your computer. In the subsequent window, click on the icon for mysql-8.0.31-macos12-arm64.pkg and allow the package to run its program.
 
-![](images/install_2.jpg) ![](images/install_3.jpg)
+![](img/install_2.jpg) ![](img/install_3.jpg)
 
 3.  Follow the installation steps in the 'Install MySQL 8.0.31 Community' window. At the 'Configuration' step (in the sidebar below), the installer will prompt you to assign a password to an initial 'root' account. Remember this password for configuring your database later. When the installation has completed successfully, you may move the installer to Trash.
 
-![](images/install_4.jpg) ![](images/install_5.jpg)
+![](img/install_4.jpg) ![](img/install_5.jpg)
 
 4.  To check the installation, open System Settings (a.k.a System Preferences) and click on the MySQL icon at the bottom of the navigation bar. You can see whether the MySQL server is running.
 
-![](images/install_8.jpg)
+![](img/install_8.jpg)
 
 5.  After MySQL has been installed this way, you might still have to configure the path to the MySQL server. In other words, you want to be able to start up the MySQL shell from the command line by running `$ mysql` (don't type the $). When you open terminal, your default interactive shell automatically executes a hidden configuration file located in your home directory that contains commands to do a number of things upon login, such as adding a directory to ```$PATH`, exporting some variable, and customizing the shell session (`.bash_profile`for`bash`,`.zprofile`for`zsh\`\`\`, etc. for related shells).
 
@@ -119,25 +119,25 @@ For the example in this vignette, you can try using the MySQL command line to se
 
 1.  Download MySQL Workbench 8.0.31 from <https://dev.mysql.com/downloads/workbench/>. Be sure to select the correct operating system and processor for your computer. For Macbook M1/M2, please select macOS (x86, 64-bit), DMG Archive. You can start the download without creating an Oracle Web Account.
 
-![](images/install_9.jpg)
+![](img/install_9.jpg)
 
-![](images/install_10-01.jpg)
+![](img/install_10-01.jpg)
 
 2.  Once the download is complete, open mysql-workbench-community-8.0.31-macos-x86_64. This file can be found either in the downloads toolbar at the bottom your browser window (Google Chrome) or in the 'Downloads' folder of your computer. In the subsequent window, click on the icon for mysql-8.0.31-macos12-arm64.pkg and allow the package to run its program. Then, you can drag MySQLWorkbench into the Applications Icon to complete the installation.
 
-![](images/install_11-01.jpg)
+![](img/install_11-01.jpg)
 
 3.  Once the installation is complete, open the MySQLWorkbench. Click the database button at the upper left corner and then click the "Connect to Database".
 
-![](images/install_12.jpg)
+![](img/install_12.jpg)
 
 4.  Then, you need to click "store in Keychain" and enter the password you set when you download the MySQL server. Now, you successfully connect to the database from MySQLWorkbench.
 
-![](images/install_13.jpg)
+![](img/install_13.jpg)
 
-![](images/install_14.jpg)
+![](img/install_14.jpg)
 
-![](images/install_15.jpg)
+![](img/install_15.jpg)
 
 # Reference
 
