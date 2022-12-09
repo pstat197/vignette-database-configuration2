@@ -1,0 +1,188 @@
+---
+title: "Databases and Queries in MySQL"
+format: pdf
+editor: visual
+author: Ankur Malik, Haotian Xia, Haoming Deng, Jennifer Park, Russel Liu 
+---
+
+## ABSTRACT:
+
+summary:
+
+## DATA:
+
+Write about data set...
+
+# 
+
+## WHAT ARE Queries, SQL, MySQL:
+
+**What is a Query? What is a SQL? What is MySQL?**
+
+A **query** is a statement which enables us to extract data or information from a particular database table. We are writing a statement or command which allows us to extract a specific piece of information from our database. Now you may wonder what a database is? A **database** is the collection of structured data stored within a computer system. We use database management systems (*DBMS*) to control a database.
+
+**SQL** is an acronym for *standard query language*. SQL is considered to be a programming language which can be used to manipulate, query, access, and control a database or table.
+
+In this project, we are focusing on a specific kind of SQL called MySQL**. MySQL** is defined a relational database management system based on SQL. It differs from other versions of SQL primarily based on syntax, functionality, and purpose.
+
+## MySQL Functions:
+
+**Function:** WHERE
+
+**Purpose:** It is used to filter records based on a specific condition
+
+```{r}
+# Selecting an instant from the day database wehre the temp is 0.3441670 and limit it to 2 outputs 
+dbGetQuery(mydb, "SELECT instant FROM day where temp = 0.3441670 LIMIT 2" ) 
+```
+
+**Function:** ORDER BY
+
+**Purpose:** It is used to sort the result-set in ascending or descending order.
+
+```{r}
+# Selecting the temperature from the day database and ordering our ouput by season in Ascending order with a limit of 3 ouputs 
+dbGetQuery(mydb, "SELECT temp FROM day ORDER BY season ASC LIMIT 3" ) # Ascending Order
+# Selecting the temperature from the day database and ordering our ouput by season in Descending order with a limit of 3 ouputs 
+dbGetQuery(mydb, "SELECT temp FROM day ORDER BY season DESC LIMIT 3" ) # Descending Order
+```
+
+**Function:** LIMIT
+
+**Purpose:** It is used to select a limited number of records.
+
+```{r}
+#Select the date from the day database where the tempeature is greater than 0 and limiting it to 5 outputs
+dbGetQuery(mydb, "SELECT dteday FROM day where temp > 0 LIMIT 5" )  
+```
+
+**Function:** LEFT JOIN
+
+**Purpose:** Left Join returns all records from the left table (table1), and the matching records from the right table (table2). The result is 0 records from the right side, if there is no match.
+
+```{r}
+# Selecting windspeed from the day database and casual from the hour database and left joining all the attributes on season from the day and hour database and limiting it to 2 outputs
+dbGetQuery(mydb, 'SELECT day.windspeed, hour.casual FROM day LEFT JOIN hour ON day.season = hour.season LIMIT 2')
+```
+
+**Function:** RIGHT JOIN
+
+**Purpose:** Right Join returns all records from the right table (table2), and the matching records from the left table (table1). The result is 0 records from the left side, if there is no match.
+
+```{r}
+# Selecting windspeed from the day database and casual from the hour database and right joining all the attributes on season from the day and hour database and limiting it to 2 outputs
+dbGetQuery(mydb, 'SELECT day.windspeed, hour.casual FROM day RIGHT JOIN hour ON day.season = hour.season LIMIT 2')
+```
+
+**Function:** INNER JOIN
+
+**Purpose:** Inner Join selects records that have matching values in both tables.
+
+```{r}
+# Selecting windspeed from the day database and casual from the hour database and inner joining all the attributes on season from the day and hour database and limiting it to 2 outputs
+dbGetQuery(mydb, 'SELECT day.windspeed, hour.casual FROM day INNER JOIN hour ON day.season = hour.season LIMIT 2')
+```
+
+**Function:** OUTER JOIN/ FULL JOIN
+
+**Purpose:** Outer Join keyword returns all records when there is a match in left (table1) or right (table2) table records.
+
+```{r}
+# dbGetQuery(mydb, 'SELECT day.season, hour.casual FROM day FULL JOIN hour ON day.season = hour.season LIMIT 5')
+# Selecting all the attributes from day and hour database where there is a match
+dbGetQuery(mydb, "SELECT day.windspeed, hour.casual FROM day LEFT JOIN hour ON day.season = hour.season UNION 
+           SELECT day.windspeed, hour.casual FROM day RIGHT JOIN hour ON day.season = hour.season LIMIT 5")
+```
+
+**Function:** UNION
+
+**Purpose:** We use the union operator to combine the result-set of two or more SELECT statements.
+
+```{r}
+# We are selecting cnt from the day database and also selecting temperature from the hour database and using union to combine both select statements with a limit of 2 outputs
+dbGetQuery(mydb, "SELECT day.cnt FROM day UNION SELECT temp FROM hour LIMIT 2")
+```
+
+**Function:** IN
+
+**Purpose:** The in operator allows you to specify multiple values in a where clause or shorthand for multiple or conditions
+
+```{r}
+# Selecting attributes from the day database where season in the select season from the day database and limit output to 5     
+dbGetQuery(mydb, "SELECT* FROM day WHERE season IN (SELECT season FROM day) LIMIT 5")
+```
+
+**Function:** LIKE
+
+**Purpose:** The like operator is used in a where clause to search for a specified pattern in a column. We use the percent operator (%) to represent 0, 1, or multiple characters. The underscore ( \_ ) represents a single character.
+
+```{r}
+# Selecting temp and season from the day database where the date... and limit to 4 outputs
+dbGetQuery(mydb, "SELECT temp,season FROM day WHERE dteday LIKE '%2' LIMIT 4") # End in 2
+dbGetQuery(mydb, "SELECT temp,season FROM day WHERE dteday LIKE '2%' LIMIT 4") # Start with 2 
+dbGetQuery(mydb, "SELECT temp,season FROM day WHERE dteday LIKE '%2%' LIMIT 4") # Has 2 in it 
+dbGetQuery(mydb, "SELECT temp,season FROM day WHERE dteday LIKE '2%2' LIMIT 4") # Start with 2 and ends in 2
+
+```
+
+**Function:** BETWEEN
+
+**Purpose:** The between operator selects values within a given range. The values can be numbers, text, or dates.
+
+```{r}
+#Select the date and atemp from day where the temp is between 0 and 1 and limit to 5 outputs
+dbGetQuery(mydb, "SELECT dteday, atemp FROM day where temp BETWEEN 0 AND 1 LIMIT 5" )  
+
+```
+
+**Function:** GROUP BY
+
+**Purpose:** The group by statement groups rows that have the same values into summary rows
+
+```{r}
+# Select the number of season from day database and group by date the output and order by the count of the season in descending order and limit to 2 outputs
+dbGetQuery(mydb, "SELECT COUNT(season) FROM day GROUP BY dteday ORDER BY COUNT(season) DESC LIMIT 2")
+```
+
+**Function:** HAVING
+
+**Purpose:** The having clause was added to SQL because the where keyword cannot be used with aggregate functions.
+
+```{r}
+# Select the date from the day database and group by date having the count of the temperatures being greater than 0.2 and limit to 5 outputs
+dbGetQuery(mydb, "SELECT dteday FROM day GROUP BY dteday HAVING COUNT(temp) > 0.2 LIMIT 5" ) 
+```
+
+**Function:** CASE
+
+**Purpose:** expression goes through conditions and returns a value when the first condition is met (like an if-then-else statement). So, once a condition is true, it will stop reading and return the result. If no conditions are true, it returns the value in the else clause.
+
+```{r}
+# Select windspeed and when the windspeed is less than 0.1 output low else Null
+dbGetQuery(mydb, "SELECT windspeed, CASE 
+            WHEN windspeed < 0.1 THEN 'LOW'
+            ELSE NULL
+            END AS CHECK_LOWSPEED FROM day")
+```
+
+**Function:** DISTINCT
+
+**Purpose:** The distinct statement is used to return only distinct (different) values
+
+```{r}
+# Select distinct date from day where the temp is 0.3441670
+dbGetQuery(mydb, "SELECT DISTINCT(dteday) FROM day where temp = 0.3441670" ) 
+dbGetQuery(mydb, "SELECT DISTINCT(windspeed) FROM day where temp = 0.1" ) # Value Does not Exist
+```
+
+## Works Cited:
+
+1.  Colburn, Rafe. Special Edition Using SQL. Que, 2000.
+2.  Röhm, Uwe, et al. "SQL for Data Scientists: Designing SQL Tutorials for Scalable Online Teaching." Proceedings of the VLDB Endowment, vol. 13, no. 12, 2020, pp. 2989--92, https://doi.org/10.14778/3415478.3415526.
+3.  Guo, Aibo, et al. "ER-SQL: Learning Enhanced Representation for Text-to-SQL Using Table Contents." Neurocomputing (Amsterdam), vol. 465, 2021, pp. 359--70, https://doi.org/10.1016/j.neucom.2021.08.134.
+4.  Guo, Aibo, et al. "ER-SQL: Learning Enhanced Representation for Text-to-SQL Using Table Contents." Neurocomputing (Amsterdam), vol. 465, 2021, pp. 359--70, https://doi.org/10.1016/j.neucom.2021.08.134.
+5.  Reese, George., et al. Managing and Using MySQL. 2nd ed., O'Reilly, 2002.
+
+## 
+
+\

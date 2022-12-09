@@ -1,0 +1,148 @@
+# Installing the MySQL Server
+
+1.  Download MySQL Community Server 8.0.31 from <https://dev.mysql.com/downloads/mysql/>. Be sure to select the correct operating system and processor for your computer. For Macbook M1/M2, it is macOS 12 (ARM, 64-bit), DMG Archive. You can start the download without creating an Oracle Web Account.
+
+![](images/install_1.jpg)
+
+2.  Once the download is complete, open mysql-8.0.31-macos12-arm64.dmg. This file can be found either in the downloads toolbar at the bottom your browser window (Google Chrome) or in the 'Downloads' folder of your computer. In the subsequent window, click on the icon for mysql-8.0.31-macos12-arm64.pkg and allow the package to run its program.
+
+![](images/install_2.jpg) ![](images/install_3.jpg)
+
+3.  Follow the installation steps in the 'Install MySQL 8.0.31 Community' window. At the 'Configuration' step (in the sidebar below), the installer will prompt you to assign a password to an initial 'root' account. Remember this password for configuring your database later. When the installation has completed successfully, you may move the installer to Trash.
+
+![](images/install_4.jpg) ![](images/install_5.jpg)
+
+4.  To check the installation, open System Settings (a.k.a System Preferences) and click on the MySQL icon at the bottom of the navigation bar. You can see whether the MySQL server is running.
+
+![](images/install_8.jpg)
+
+5.  After MySQL has been installed this way, you might still have to configure the path to the MySQL server. In other words, you want to be able to start up the MySQL shell from the command line by running `$ mysql` (don't type the $). When you open terminal, your default interactive shell automatically executes a hidden configuration file located in your home directory that contains commands to do a number of things upon login, such as adding a directory to ```$PATH`, exporting some variable, and customizing the shell session (`.bash_profile`for`bash`,`.zprofile`for`zsh\`\`\`, etc. for related shells).
+
+We want to add `export PATH=$PATH:/usr/local/<your_mysql_folder>/bin` to the end of the .bash_profile file so that your shell can find the path to MySQL on your machine and open a MySQL shell.
+
+-   `export` is a built-in command that sets an environment variable to be exported to child-processes, so that the child inherits them. For example:
+
+<!-- -->
+
+    $ foo=bar
+    $ bash -c 'echo $foo'
+
+    $ export foo
+    $ bash -c 'echo $foo'
+    bar
+
+-   The PATH before = is a variable name and the combination tells bash to store the stuff behind the = in the variable.
+-   The \$PATH is the value of the variable PATH up until then.
+-   The combination PATH="\$PATH:some_path_to_stuff" extends the PATH variable. In bash this is a colon (:) separated list.
+
+So first, find the path to MySQL. By default, the MySQL directories are installed under /usr/local/. On MacOS, find '/usr/local/mysql' using Spotlight (Cmd + Space and enter it into the search bar) and open the folder e.g. mysql-8.0.31-macos12-arm64. Right click on the 'bin' folder, hold the Option key, and click 'Copy "bin" Pathname' to copy the path.
+
+Then, run the following commands in your terminal to open .bash_profile.
+
+    $ ls -a                 # list all the files in your home directory with 
+                              # the -a option to include  hidden files.
+    $ touch .bash_profile   # if you don't see it listed, you can create one
+    $ ls -a                 # check that it's there now
+    $ open -t .bash_profile # open the text file. The -t option will open it with 
+                              # your default text editor.
+
+Lastly, add `export PATH=$PATH:<paste_your_mysql_path_here>` e.g. `export PATH=$PATH:/usr/local/mysql-8.0.31-macos12-arm64/bin` to the end of your .bash_profile.
+
+    export PATH=$PATH:/usr/local/<your_mysql_folder>/bin 
+
+To save and exit, you should just be able to Cmd + s to save and close the window.
+
+6.  Now, you should be able to connect to MySQL from the command line. This command invokes mysql without specifying any explicit connection parameters:
+
+<!-- -->
+
+    $ mysql
+
+Because there are no parameter options, the default values apply:
+
+-   The default host name is localhost.
+-   The default user name is ODBC on Windows, your Unix login name on Unix, and root on MacOS.
+-   No password is sent because neither --password nor -p is given. If all your users have passwords, you may get an error that looks something like this:
+
+<!-- -->
+
+    ERROR 1045 (28000): Access denied for user 'USERNAME'@'localhost' (using password: NO)
+
+-   The first nonoption argument is taken as the name of the default database. Because there is no such argument, mysql selects no default database.
+
+7.  To specify the host name and user name explicitly, as well as a password, supply appropriate options on the command line. To select a default database, add a database-name argument.
+
+<!-- -->
+
+    mysql --host=HOSTNAMEorIP --user=USERNAME --password=PASSWORD DATABASENAME
+    mysql -h HOSTNAMEorIP -u USERNAME -pPASSWORD DATABASENAME
+
+The options above mean:
+
+    --host or -h: host machine or IP address running the server
+    --user or -u: username
+    --password or -p: password (**no space between -p and the password text**). To avoid security risk, specify this option without any following password value and you will prompted to enter the password after you run the command.
+    - the first non-option argument is name of the database that you want to connect.
+
+For the example in this vignette, you can try using the MySQL command line to see that 'bikes' is in the list of all databases, and then exit to your default terminal.
+
+    $ mysql -u root -p
+    Enter password: <YOUR ROOT PASSWORD>
+    Welcome to the MySQL monitor.  Commands end with ; or \g.
+    Your MySQL connection id is 161
+    Server version: 8.0.31 MySQL Community Server - GPL
+
+    Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+    Oracle is a registered trademark of Oracle Corporation and/or its
+    affiliates. Other names may be trademarks of their respective
+    owners.
+
+    Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+    mysql> show databases;
+    +--------------------+
+    | Database           |
+    +--------------------+
+    | bikes              |
+    | information_schema |
+    | mysql              |
+    | performance_schema |
+    | sys                |
+    +--------------------+
+    5 rows in set (0.06 sec)
+
+    mysql> exit
+    Bye
+
+# Installing MySQL Workbench
+
+1.  Download MySQL Workbench 8.0.31 from <https://dev.mysql.com/downloads/workbench/>. Be sure to select the correct operating system and processor for your computer. For Macbook M1/M2, please select macOS (x86, 64-bit), DMG Archive. You can start the download without creating an Oracle Web Account.
+
+![](images/install_9.jpg)
+
+![](images/install_10-01.jpg)
+
+2.  Once the download is complete, open mysql-workbench-community-8.0.31-macos-x86_64. This file can be found either in the downloads toolbar at the bottom your browser window (Google Chrome) or in the 'Downloads' folder of your computer. In the subsequent window, click on the icon for mysql-8.0.31-macos12-arm64.pkg and allow the package to run its program. Then, you can drag MySQLWorkbench into the Applications Icon to complete the installation.
+
+![](images/install_11-01.jpg)
+
+3.  Once the installation is complete, open the MySQLWorkbench. Click the database button at the upper left corner and then click the "Connect to Database".
+
+![](images/install_12.jpg)
+
+4.  Then, you need to click "store in Keychain" and enter the password you set when you download the MySQL server. Now, you successfully connect to the database from MySQLWorkbench.
+
+![](images/install_13.jpg)
+
+![](images/install_14.jpg)
+
+![](images/install_15.jpg)
+
+# Reference
+
+1.MySQL Installation Guide: <https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/>
+
+2.MySQL Server Configuration Guide: <https://www.youtube.com/watch?v=nj3nBCwZaqI>
+
+3.MySQL Workbench Installation Guide: <https://www.youtube.com/watch?v=6FvvWhiZyDY>
