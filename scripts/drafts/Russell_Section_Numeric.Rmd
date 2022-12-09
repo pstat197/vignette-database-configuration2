@@ -1,0 +1,107 @@
+---
+title: "Russell_Section2_Numeric"
+author: "Russell Liu"
+date: "2022-12-08"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+Set up environment:
+
+```{r}
+library(RMariaDB)
+library(DBI)
+
+df_day <- read.csv("data/day.csv", header=TRUE)
+head(df_day)
+
+df_hour <-read.csv("data/hour.csv", header=TRUE)
+head(df_hour)
+```
+
+```{r}
+# list the tables available in bikes
+dbListTables(mydb)
+```
+
+Numeric Functions
+
+#rand()
+
+```{r}
+dbGetQuery(mydb, "SELECT RAND()" )
+```
+
+We can see that a random number from 0 to 1 is chosen.
+
+#round()
+
+The ROUND() function rounds a number to a specified number of decimal
+places. For example, we want to round up temperature and windspeed to 3
+decimals
+
+```{r}
+dbGetQuery(mydb, "SELECT temp,round(temp,3),windspeed, round(windspeed,
+3) FROM day" )
+```
+
+We can see that temperature and windspeed are round from 7decimals to 3
+decimals.
+
+#FLOOR()
+
+The FLOOR() function returns the largest integer value that is smaller
+than or equal to a number. We want to see the largest integer value
+which is either equal to or less than the given average or minimum
+windspeed.
+
+```{r}
+dbGetQuery(mydb,"SELECT AVG(windspeed),MIN(windspeed),FLOOR(AVG(windspeed)) AS
+Lower_Average FROM day" ) 
+dbGetQuery(mydb, "SELECT
+AVG(windspeed),MIN(windspeed),FLOOR(MIN(windspeed)) AS Lower_Average
+FROM day" )
+```
+
+Given the average value of windspeed and minimum value of windspeed, we
+see largest integer value that is either equal to or less than the
+average and minimum windspeed.
+
+#CEIL()
+
+The CEIL() function returns the smallest integer value that is bigger
+than or equal to a number. It is equal to the CEILING() function. we
+want to see the smallest integer value which is either greater than or
+equal to the given average or minimum number.
+
+```{r}
+dbGetQuery(mydb, "SELECT
+AVG(windspeed),MIN(windspeed),CEIL(AVG(windspeed)) AS Lower_Average FROM
+day" ) 
+dbGetQuery(mydb, "SELECT
+AVG(windspeed),MIN(windspeed),CEIL(MIN(windspeed)) AS Lower_Average FROM
+day" )
+```
+
+#Truncate(n,d) with positive d
+
+we want to see atemp keeps 2 decimals and hum only keeps 1 decimals
+
+```{r}
+dbGetQuery(mydb, "SELECT atemp, hum,
+TRUNCATE(atemp,2), TRUNCATE(hum,1) FROM day" )
+```
+
+#Truncate(n,d) with negative d we want to see atem and hum are truncated
+two or one digit left to the decimal points.
+
+```{r}
+dbGetQuery(mydb,
+"SELECT atemp, hum, TRUNCATE(atemp,-2), TRUNCATE(hum,-1) FROM day" )
+```
+
+```{r}
+dbGetQuery(mydb, "SELECT * FROM hour" )
+```
