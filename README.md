@@ -24,14 +24,23 @@ root directory
 
 ## Reference list
 1.MySQL Installation Guide: https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/
+
 2.MySQL Server Configuration Guide: https://www.youtube.com/watch?v=nj3nBCwZaqI
+
 3.MySQL Workbench Installation Guide: https://www.youtube.com/watch?v=6FvvWhiZyDY
+
 4.Colburn, Rafe. Special Edition Using SQL. Que, 2000.
+
 5.Röhm, Uwe, et al. "SQL for Data Scientists: Designing SQL Tutorials for Scalable Online Teaching." Proceedings of the VLDB Endowment, vol. 13, no. 12, 2020, pp. 2989–92, https://doi.org/10.14778/3415478.3415526.
+
 6.Guo, Aibo, et al. "ER-SQL: Learning Enhanced Representation for Text-to-SQL Using Table Contents." Neurocomputing (Amsterdam), vol. 465, 2021, pp. 359–70, https://doi.org/10.1016/j.neucom.2021.08.134.
+
 7.Guo, Aibo, et al. "ER-SQL: Learning Enhanced Representation for Text-to-SQL Using Table Contents." Neurocomputing (Amsterdam), vol. 465, 2021, pp. 359–70, https://doi.org/10.1016/j.neucom.2021.08.134.
+
 8.Reese, George., et al. Managing and Using MySQL. 2nd ed., O'Reilly, 2002.
+
 9.https://rmariadb.r-dbi.org/reference/dbconnect-mariadbdriver-method
+
 10.https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset
 
 ## Usage
