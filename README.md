@@ -5,7 +5,7 @@ Vignette on configuring a database and writing queries in R; created as a class 
 Jennifer Park, Russell(Senyuan) Liu, Haotian Xia, Haoming Deng, Ankur Malik.
 
 ## Abstract
-In this report, we explore how to configure a dataset and write queries in R. Specifically, we first configure the database, build the database, including steps such as Import Libraries, Connect R/Python to MySQL, Create a new database in R/Python, Connect to the Database,Create table and Insert data/table into database. We then write queries by introducing some common functions, tables, syntax and filtering clause. Besides, we created a document which explains how to setup MySQL and the corresponding environment steps by steps.
+In this methods vignette, we explore how to configure a database and write queries in R. First, we go over the required software and packages, specifically how to install MySQL. Then, we include steps to create a new database, make configurations, and enter new data into an existing database using some sample data. Lastly, we explain how to write queries by introducing some common functions, tables, syntax and the filtering clause in SQL.
 
 ## Repository contents
 1. root directory
@@ -32,7 +32,7 @@ In this report, we explore how to configure a dataset and write queries in R. Sp
 
 1.4 final_report.qmd
 
-1.5 vignette-group1-database.Rproj
+1.5 vignette-database-configuration2.Rproj
 
 1.6 README.md
 

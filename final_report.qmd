@@ -7,62 +7,75 @@ author: Ankur Malik, Haotian Xia, Haoming Deng, Jennifer Park, Russell Liu
 
 ## Abstract:
 
-In this report, we explore how to configure a dataset and write queries in R. Specifically, we first configure the database, build the database, including steps such as Import Libraries, Connect R/Python to MySQL, Create a new database in R/Python, Connect to the Database,Create table and Insert data/table into database. We then write queries by introducing some common functions, tables, syntax and filtering clause. Besides, we created a document which explains how to setup MySQL and the corresponding environment steps by steps.
+In this methods vignette, we explore how to configure a database and write queries in R. First, we go over the required software and packages. Then, we include steps to create a new database, make configurations, and enter new data into an existing database using some sample data. Lastly, we explain how to write queries by introducing some common functions, tables, syntax and the filtering clause in SQL.
 
 ## Introduction:
 
-We are introducing a tutorial for people who want to play with database in R
+This is a tutorial on how to configure a database in R.
 
-Goal: Make people feel comfortable in basic programming with database and extract the data they want Target people (group): people who do not have database programming experience scope: SQL and dbplyr in R
+**Goal:** Make people feel comfortable in basic programming with a database and instruct them on how to extract the data they want.
 
-SQL is one of the most popular database language for people to extract data information. However, it has it own syntax and sometimes hard to memorize and learn. In order to adapt people have different coding background, we are also introducing dbplyr as a substitution way to help you extract data from the dataset. dbplyr is a package in R, and its syntax like most r functions. The purpose for dbplyr is to automatically generate SQL for you so that you're not forced to use it.
+**Target:** People who do not have database programming experience.
 
-However, dbplyr doesn't do everything and is not as powerful as SQL. Therefore, this project will spend most of time on SQL and show you how dbplyr works in some cases.
+**Scope:** SQL and R.
 
-After reading both dbplyr part and sql part, you will know how easy to grab data from dataset and will form a basis for you to use them successfully in real projects.
+**Software:** [R](https://www.r-project.org/) version 4.2.0+, [RStudio](https://www.rstudio.com/products/rstudio/download/) version 2022.07.1+, [MySQL](https://dev.mysql.com/downloads/mysql/) version 8.0.31+, [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) version 8.0.31 (Optional)
 
-Let's begin with installing the MySQL Server.
+**CRAN Packages:** [RMariaDB](https://cran.r-project.org/web/packages/RMariaDB/index.html), [dbplyr](https://cran.r-project.org/web/packages/dbplyr/vignettes/dbplyr.html), dplyr
+
+RMariaDB is a [DBI](https://cran.r-project.org/web/packages/DBI/vignettes/spec.html)-compliant database interface and [MariaDB](https://mariadb.org/) driver for R, meaning that it uses SQL statements wrapped in R functions in order to access MySQL databases. SQL is one of the most popular database languages for people to extract data information. However, it has its own syntax, which can hard to pick up quickly. Since coding backgrounds may vary, we also introduce dbplyr, a CRAN package that translates the most common R functions to their SQL equivalents. Thus, users can access remote database tables as if they are in-memory R data frames without having to write raw SQL code themselves.
+
+However, dbplyr does not cover all use cases and is not as powerful as SQL. Therefore, this project will primarily focus on SQL instruction and demonstrate how dbplyr works in some cases.
+
+By the end of this vignette, you will know how to apply database methods successfully in real projects.
+
+**What is a Query, SQL, and MySQL?**
+
+A **query** is a statement which enables us to extract data or information from a particular database table. We are writing a statement or command which allows us to extract a specific piece of information from our database. Now you may wonder what a database is? A **database** is the collection of structured data stored within a computer system. We use database management systems (*DBMS*) to control a database.
+
+**SQL** is an acronym for *standard query language*. SQL is considered to be a programming language which can be used to manipulate, query, access, and control a database or table.
+
+In this project, we are focusing on a specific kind of SQL called MySQL**. MySQL** is defined a relational database management system based on SQL. It differs from other versions of SQL primarily based on syntax, functionality, and purpose.
+
+Assuming R and RStudio have already been installed, let's begin with how to install the MySQL Server.
 
 ## Installing the MySQL Server
 
-1.  Download MySQL Community Server 8.0.31 from <https://dev.mysql.com/downloads/mysql/>. Be sure to select the correct operating system and processor for your computer. For Macbook M1/M2, it is macOS 12 (ARM, 64-bit), DMG Archive. You can start the download without creating an Oracle Web Account.
+1.  Download [MySQL Community Server 8.0.31](https://dev.mysql.com/downloads/mysql/). Be sure to select the correct operating system and processor for your computer. For Macbook M1/M2, it is "macOS 12 (ARM, 64-bit), DMG Archive". You can start the download without creating an Oracle Web Account.
 
 ![](img/install_1.jpg)
 
-2.  Once the download is complete, open mysql-8.0.31-macos12-arm64.dmg. This file can be found either in the downloads toolbar at the bottom your browser window (Google Chrome) or in the 'Downloads' folder of your computer. In the subsequent window, click on the icon for mysql-8.0.31-macos12-arm64.pkg and allow the package to run its program.
+2.  Once the download is complete, open "mysql-8.0.31-macos12-arm64.dmg". This file can be found either in the downloads toolbar at the bottom your browser window on Google Chrome, or in the "Downloads" folder of your computer. In the subsequent window, click on the icon for "mysql-8.0.31-macos12-arm64.pkg" and allow the package to run its program.
 
 ![](img/install_2.jpg) ![](img/install_3.jpg)
 
-3.  Follow the installation steps in the 'Install MySQL 8.0.31 Community' window. At the 'Configuration' step (in the sidebar below), the installer will prompt you to assign a password to an initial 'root' account. Remember this password for configuring your database later. When the installation has completed successfully, you may move the installer to Trash.
+3.  Follow the installation steps in the "Install MySQL 8.0.31 Community" window. At the Configuration step in the sidebar below, the installer will prompt you to assign a password to an initial "root" account. Remember this password for configuring your database later. When the installation has completed successfully, you may move the installer to Trash.
 
 ![](img/install_4.jpg) ![](img/install_5.jpg)
 
-4.  To check the installation, open System Settings (a.k.a System Preferences) and click on the MySQL icon at the bottom of the navigation bar. You can see whether the MySQL server is running.
+4.  To check the installation, open System Settings a.k.a System Preferences and click on the MySQL icon at the bottom of the navigation bar. You can see whether the MySQL server is running.
 
 ![](img/install_8.jpg)
 
-5.  After MySQL has been installed this way, you might still have to configure the path to the MySQL server. In other words, you want to be able to start up the MySQL shell from the command line by running `$ mysql` (don't type the $). When you open terminal, your default interactive shell automatically executes a hidden configuration file located in your home directory that contains commands to do a number of things upon login, such as adding a directory to ```$PATH`, exporting some variable, and customizing the shell session (`.bash_profile`for`bash`,`.zprofile`for`zsh\`\`\`, etc. for related shells).
+5.  After MySQL has been installed this way, you may still have to configure the path to the MySQL server. In other words, you want to be able to start up the MySQL shell from the command line by running `$ mysql` (don't type the `$`). When you open terminal, your default interactive shell automatically executes a hidden configuration file in your home directory that contains commands to do a number of things upon log-in, such as adding a directory to `$PATH`, exporting some variable, and customizing the shell session. The file is called bash_profile for Bash, .zprofile for Z shell (zsh), and et cetera for related shells. So for MacOS, you will add `export PATH=$PATH:/usr/local/<your_mysql_folder>/bin` to the end of the .bash_profile file so that your shell can find the path to MySQL on your machine and open a MySQL shell.
 
-We want to add `export PATH=$PATH:/usr/local/<your_mysql_folder>/bin` to the end of the .bash_profile file so that your shell can find the path to MySQL on your machine and open a MySQL shell.
+-   `export` is a built-in command that sets an environment variable to be exported to child-processes (or subshells), so that the child inherits them. For example:
 
--   `export` is a built-in command that sets an environment variable to be exported to child-processes, so that the child inherits them. For example:
+        $ foo=bar 
+        $ bash -c 'echo $foo'
 
-<!-- -->
+        $ export foo 
+        $ bash -c 'echo $foo' bar
 
-    $ foo=bar
-    $ bash -c 'echo $foo'
+-   `PATH` is an environment variable specifying a set of directories where executable programs are located.
 
-    $ export foo
-    $ bash -c 'echo $foo'
-    bar
+-   `${PATH}` is the default `PATH` assignment.
 
--   The PATH before = is a variable name and the combination tells bash to store the stuff behind the = in the variable.
--   The \$PATH is the value of the variable PATH up until then.
--   The combination PATH="\$PATH:some_path_to_stuff" extends the PATH variable. In bash this is a colon (:) separated list.
+-   The combination `PATH="${PATH}:<some_path_to_a_directory>"` extends the `PATH` variable to the desired directory. In Bash, this is a colon (:) separated list.
 
-So first, find the path to MySQL. By default, the MySQL directories are installed under /usr/local/. On MacOS, find '/usr/local/mysql' using Spotlight (Cmd + Space and enter it into the search bar) and open the folder e.g. mysql-8.0.31-macos12-arm64. Right click on the 'bin' folder, hold the Option key, and click 'Copy "bin" Pathname' to copy the path.
+First, find the path to MySQL. On MacOS, the MySQL directories are installed under `/usr/local/` by default. Navigate to `/usr/local/` using Spotlight (Command-Space and enter into the search bar) and open the "mysql" folder e.g. "mysql-8.0.31-macos12-arm64". Right click on the bin folder, hold the Option key, and click on "Copy 'bin' as Pathname".
 
-Then, run the following commands in your terminal to open .bash_profile.
+Then, run the following commands in Terminal to open .bash_profile.
 
     $ ls -a                 # list all the files in your home directory with 
                               # the -a option to include  hidden files.
@@ -71,43 +84,29 @@ Then, run the following commands in your terminal to open .bash_profile.
     $ open -t .bash_profile # open the text file. The -t option will open it with 
                               # your default text editor.
 
-Lastly, add `export PATH=$PATH:<paste_your_mysql_path_here>` e.g. `export PATH=$PATH:/usr/local/mysql-8.0.31-macos12-arm64/bin` to the end of your .bash_profile.
+Lastly, add `export PATH=$PATH:<paste_your_mysql_path_here>` e.g. `export PATH=$PATH:/usr/local/mysql-8.0.31-macos12-arm64/bin` to the end of .bash_profile. To save and exit, you should just be able to Command-S to save and close the window.
 
-    export PATH=$PATH:/usr/local/<your_mysql_folder>/bin 
-
-To save and exit, you should just be able to Cmd + s to save and close the window.
-
-6.  Now, you should be able to connect to MySQL from the command line. This command invokes mysql without specifying any explicit connection parameters:
-
-<!-- -->
-
-    $ mysql
-
-Because there are no parameter options, the default values apply:
+6.  Now, you should be able to connect to MySQL from the command line. The `$ mysql` command invokes mysql without specifying any explicit connection parameters. Because there are no parameter options, the default values apply:
 
 -   The default host name is localhost.
--   The default user name is ODBC on Windows, your Unix login name on Unix, and root on MacOS.
--   No password is sent because neither --password nor -p is given. If all your users have passwords, you may get an error that looks something like this:
+-   The default user name is ODBC on Windows, your Unix login name on Unix, and 'root' on MacOS.
+-   No password is sent because neither --password nor -p is given. If all your users have passwords, you may get an error: `ERROR 1045 (28000): Access denied for user 'USERNAME'@'localhost' (using password: NO)`
+-   The first non-option argument is taken as the name of the default database. Because there is no such argument, MySQL selects no default database.
 
+7.  To specify the host name and user name explicitly, as well as a password, supply appropriate options on the command line. To select a default database, add a database-name argument. You can use either of these commands below:
+
+        mysql –host=HOSTNAMEorIP –user=USERNAME –password=PASSWORD DATABASENAME
+        mysql -h HOSTNAMEorIP -u USERNAME -pPASSWORD DATABASENAME
+
+    The options above mean:
+
+```{=html}
 <!-- -->
-
-    ERROR 1045 (28000): Access denied for user 'USERNAME'@'localhost' (using password: NO)
-
--   The first nonoption argument is taken as the name of the default database. Because there is no such argument, mysql selects no default database.
-
-7.  To specify the host name and user name explicitly, as well as a password, supply appropriate options on the command line. To select a default database, add a database-name argument.
-
-<!-- -->
-
-    mysql --host=HOSTNAMEorIP --user=USERNAME --password=PASSWORD DATABASENAME
-    mysql -h HOSTNAMEorIP -u USERNAME -pPASSWORD DATABASENAME
-
-The options above mean:
-
+```
     --host or -h: host machine or IP address running the server
     --user or -u: username
     --password or -p: password (**no space between -p and the password text**). To avoid security risk, specify this option without any following password value and you will prompted to enter the password after you run the command.
-    - the first non-option argument is name of the database that you want to connect.
+    - the name of the database that you want to connect.
 
 For the example in this vignette, you can try using the MySQL command line to see that 'bikes' is in the list of all databases, and then exit to your default terminal.
 
@@ -142,13 +141,15 @@ For the example in this vignette, you can try using the MySQL command line to se
 
 ## Installing MySQL Workbench
 
-1.  Download MySQL Workbench 8.0.31 from <https://dev.mysql.com/downloads/workbench/>. Be sure to select the correct operating system and processor for your computer. For Macbook M1/M2, please select macOS (x86, 64-bit), DMG Archive. You can start the download without creating an Oracle Web Account.
+Optionally, you can install MySQL Workbench, which is a unified visual tool for working with MySQL servers and databases. This is like what RStudio is for R, if you plan on using more SQL in the future.
+
+1.  Download [MySQL Workbench 8.0.31](https://dev.mysql.com/downloads/workbench/). Be sure to select the correct operating system and processor for your computer. For Macbook M1/M2, please select "macOS (x86, 64-bit), DMG Archive". You can start the download without creating an Oracle Web Account.
 
 ![](img/install_9.jpg)
 
 ![](img/install_10-01.jpg)
 
-2.  Once the download is complete, open mysql-workbench-community-8.0.31-macos-x86_64. This file can be found either in the downloads toolbar at the bottom your browser window (Google Chrome) or in the 'Downloads' folder of your computer. In the subsequent window, click on the icon for mysql-8.0.31-macos12-arm64.pkg and allow the package to run its program. Then, you can drag MySQLWorkbench into the Applications Icon to complete the installation.
+2.  Once the download is complete, open "mysql-workbench-community-8.0.31-macos-x86_64". This file can be found either in the downloads toolbar at the bottom your browser window (Google Chrome) or in the "Downloads" folder of your computer. In the subsequent window, click on the icon for "mysql-8.0.31-macos12-arm64.pkg" and allow the package to run its program. Then, you can drag MySQLWorkbench into the Applications Icon to complete the installation.
 
 ![](img/install_11-01.jpg)
 
@@ -166,20 +167,20 @@ For the example in this vignette, you can try using the MySQL command line to se
 
 ## Data Introduction
 
-Our dataset is Bike Sharing Dataset from UC,Irvine Machine Learning Center. (https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset) This dataset contains the hourly and daily count of rental bikes between years 2011 and 2012 in Capital bikeshare system with the corresponding weather and seasonal information. We are going to use this dataset as the example to implement some SQL functions. The 'data' directory contains two csv files and a Readme with the data description. \# hour.csv : bike sharing counts aggregated on hourly basis. Records: 17379 hours \# day.csv : bike sharing counts aggregated on daily basis. Records: 731 days
+The sample data used to demonstrate the methods in this vignette is the [Bike Sharing Dataset](https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset) from the University of California, Irvine Machine Learning Center. This dataset contains the hourly and daily count of rental bikes between years 2011 and 2012 in the Capital bikeshare system with the corresponding weather and seasonal information. It can be found in our 'data' directory, which contains two .csv files and a Readme with more data description.
+
+Now, we can get started in R.
 
 ## Preliminary Steps
 
-1.Install and load the packages
+1.  Install and load the required package.
 
 ```{r}
 install.packages("RMariaDB")
-install.packages("DBI")
 library(RMariaDB)
-library(DBI)
 ```
 
-2.Import csv files as data frames
+2.  Import .csv files as data frames.
 
 ```{r}
 df_day <- read.csv("data/day.csv", header=TRUE)
@@ -189,15 +190,15 @@ df_hour <-read.csv("data/hour.csv", header=TRUE)
 head(df_hour)
 ```
 
-3.Build the Database
-
-connect R to MySQL by creating a MySQL connection object select which MySQL account to use for the database user - your account username. Here we use the default, 'root'. password - your account password host - a string identifying the host machine that is running server. Here we use the default, 'localhost'.
+3.  Build the Database.
 
 ```{r}
+# connect R to MySQL by creating a MySQL connection object 
 con <- dbConnect(RMariaDB::MariaDB(), 
-                 user = 'root', 
-                 password = 'password', # YOUR PASSWORD HERE
-                 host = 'localhost')
+                 user = 'root',         # YOUR USERNAME. Here, we use the default.
+                 password = 'password', # YOUR PASSWORD HERE. 
+                 host = 'localhost')    # A string identifying the host machine running the 
+                                        # server. Here, we use the default.
 
 # create a new database
 dbSendQuery(con, "CREATE DATABASE bikes")
@@ -208,12 +209,12 @@ mydb <- dbConnect(RMariaDB::MariaDB(),
                  user = 'root', 
                  password = 'password',
                  host = 'localhost',
-                 dbname = 'bikes')
+                 dbname = 'bikes')     #
 
 # Write the data frames to database tables
-dbWriteTable(conn = mydb,
-             name = "day",
-             value = df_day)
+dbWriteTable(conn = mydb,    # name of your database connection object
+             name = "day",   # set a name for your table here
+             value = df_day) # specify the dataframe to get the data from
 
 dbWriteTable(conn = mydb,
              name = "hour",
@@ -272,14 +273,6 @@ dbGetQuery(mydb, 'UPDATE day
 dbGetQuery(mydb, 'DELETE FROM day
                   WHERE workingday=0')
 ```
-
-**What is a Query? What is a SQL? What is MySQL?**
-
-A **query** is a statement which enables us to extract data or information from a particular database table. We are writing a statement or command which allows us to extract a specific piece of information from our database. Now you may wonder what a database is? A **database** is the collection of structured data stored within a computer system. We use database management systems (*DBMS*) to control a database.
-
-**SQL** is an acronym for *standard query language*. SQL is considered to be a programming language which can be used to manipulate, query, access, and control a database or table.
-
-In this project, we are focusing on a specific kind of SQL called MySQL**. MySQL** is defined a relational database management system based on SQL. It differs from other versions of SQL primarily based on syntax, functionality, and purpose.
 
 ### Filtering Clause:
 
@@ -601,43 +594,44 @@ We can also use dbplyr to query the data.
 ```{r}
 library(dbplyr)
 library(dplyr)
-#CONNECT TO DATABASE
+
+# CONNECT TO DATABASE
 con <- dbConnect(RMariaDB::MariaDB(), 
                   user = 'root', 
                   password = 'password', # YOUR PASSWORD HERE
                   host = 'localhost',
                   dbname = 'bikes')
 
-#CONNECT TO TABLE
+# CONNECT TO TABLE
 data_sample<- con %>% tbl("day")
 
-# SELECT differenct columns 
-# SELECT 4 cloumns together. In Sql we have to write down the four columns' name seperately. But in dbplyr, we can use : to select a range of columns.
+# SELECT 4 columns. In SQL we have to write down the four columns' name separately, but in dbplyr, we can use : to select a range of columns.
 data_sample %>% select(season:holiday)
 
-# We can use filter to subsititude where condition in sql. Here we are showing data that has wind speed greater than 0.4
+# We can use filter to substitute where condition in SQL. Here we are showing data that has wind speed greater than 0.4.
 data_sample %>% filter(windspeed > 0.4)
 
-# We can also do the same SQL group by and aggregation task by uing dbplyr group_by function
-
+# We can also do the same SQL group by and aggregation task by uing dbplyr group_by function.
 data_sample %>% group_by(weekday) %>%
   summarise(
     count_day = count(instant)
   )
 ```
 
-However if we want to realize join function, we need to use show_query() function to identify the join key. In this case, we still need to use SQL syntax in order to do the comlicated correct join. More can be viewed here: https://dbplyr.tidyverse.org/reference/join.tbl_sql.html
+However if we want to realize join function, we need to use show_query() function to identify the join key. In this case, we still need to use SQL syntax in order to do the complicated correct join.
 
-So the dbplyr can be used in samll simple aggregation tasks without sql knowledge. However, once multiple dataset includes, we still need to know SQL in order to finish more complicated tasks.
+In summary, dbplyr can be used in simple aggregation tasks without SQL knowledge. However, we still need to know SQL in order to finish more complicated tasks, especially with large data.
 
 ## Works Cited:
 
 1.  MySQL Installation Guide: <https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/>
 2.  MySQL Server Configuration Guide: <https://www.youtube.com/watch?v=nj3nBCwZaqI>
 3.  MySQL Workbench Installation Guide: <https://www.youtube.com/watch?v=6FvvWhiZyDY>
-4.  Colburn, Rafe. Special Edition Using SQL. Que, 2000.
-5.  Röhm, Uwe, et al. "SQL for Data Scientists: Designing SQL Tutorials for Scalable Online Teaching." Proceedings of the VLDB Endowment, vol. 13, no. 12, 2020, pp. 2989--92, https://doi.org/10.14778/3415478.3415526.
-6.  Guo, Aibo, et al. "ER-SQL: Learning Enhanced Representation for Text-to-SQL Using Table Contents." Neurocomputing (Amsterdam), vol. 465, 2021, pp. 359--70, https://doi.org/10.1016/j.neucom.2021.08.134.
-7.  Guo, Aibo, et al. "ER-SQL: Learning Enhanced Representation for Text-to-SQL Using Table Contents." Neurocomputing (Amsterdam), vol. 465, 2021, pp. 359--70, https://doi.org/10.1016/j.neucom.2021.08.134.
-8.  Reese, George., et al. Managing and Using MySQL. 2nd ed., O'Reilly, 2002.\
-9.  https://rmariadb.r-dbi.org/reference/dbconnect-mariadbdriver-method
+4.  Sample data: <https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset>
+5.  More on RMariaDB: <https://rdrr.io/cran/RMariaDB/>, <https://rmariadb.r-dbi.org/reference/dbconnect-mariadbdriver-method>
+6.  More on dbplyr and JOIN: <https://dbplyr.tidyverse.org/reference/join.tbl_sql.html>
+7.  Colburn, Rafe. Special Edition Using SQL. Que, 2000.
+8.  Röhm, Uwe, et al. "SQL for Data Scientists: Designing SQL Tutorials for Scalable Online Teaching." Proceedings of the VLDB Endowment, vol. 13, no. 12, 2020, pp. 2989--92, <https://doi.org/10.14778/3415478.3415526>.
+9.  Guo, Aibo, et al. "ER-SQL: Learning Enhanced Representation for Text-to-SQL Using Table Contents." Neurocomputing (Amsterdam), vol. 465, 2021, pp. 359--70, <https://doi.org/10.1016/j.neucom.2021.08.134>.
+10. Guo, Aibo, et al. "ER-SQL: Learning Enhanced Representation for Text-to-SQL Using Table Contents." Neurocomputing (Amsterdam), vol. 465, 2021, pp. 359--70, <https://doi.org/10.1016/j.neucom.2021.08.134>.
+11. Reese, George., et al. Managing and Using MySQL. 2nd ed., O'Reilly, 2002.\
