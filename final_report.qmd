@@ -5,6 +5,9 @@ editor: visual
 author: Ankur Malik, Haotian Xia, Haoming Deng, Jennifer Park, Russell Liu 
 ---
 
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
 ## Abstract:
 
 In this methods vignette, we explore how to configure a database and write queries in R. First, we go over the required software and packages. Then, we include steps to create a new database, make configurations, and enter new data into an existing database using some sample data. Lastly, we explain how to write queries by introducing some common functions, tables, syntax and the filtering clause in SQL.
@@ -100,9 +103,8 @@ Lastly, add `export PATH=$PATH:<paste_your_mysql_path_here>` e.g. `export PATH=$
 
     The options above mean:
 
-```{=html}
 <!-- -->
-```
+
     --host or -h: host machine or IP address running the server
     --user or -u: username
     --password or -p: password (**no space between -p and the password text**). To avoid security risk, specify this option without any following password value and you will prompted to enter the password after you run the command.
